@@ -11,7 +11,6 @@ COPY . .
 RUN ./gradlew bootJar --no-daemon
 
 # Step 2: Runtime stage
-FROM openjdk:17-jdk-slim
 
 # Set the working directory inside the container
 WORKDIR /app
