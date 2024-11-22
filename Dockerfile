@@ -1,14 +1,26 @@
-# Step 1: Use a lightweight Java image as the base
-FROM openjdk:17-jdk-slim
+# Step 1: Build stage
+FROM gradle:7.6-jdk17 AS builder
 
-# Step 2: Set the working directory inside the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy the application jar file into the container
-COPY build/libs/*.jar app.jar
+# Copy Gradle configuration and source files into the container
+COPY . .
 
-# Step 4: Expose the application port (default Spring Boot port is 8080)
+# Run the Gradle bootJar task to build the application
+RUN ./gradlew bootJar --no-daemon
+
+# Step 2: Runtime stage
+FROM openjdk:17-jdk-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the built JAR file from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Expose the application's port
 EXPOSE 8080
 
-# Step 5: Run the application
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
