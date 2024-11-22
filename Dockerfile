@@ -8,9 +8,10 @@ WORKDIR /app
 COPY . .
 
 # Run the Gradle bootJar task to build the application
-RUN ./gradlew bootJar --no-daemon
+RUN ./gradlew bootJar
 
 # Step 2: Runtime stage
+FROM openjdk:17-jdk-slim
 
 # Set the working directory inside the container
 WORKDIR /app
